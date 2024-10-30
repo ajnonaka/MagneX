@@ -209,14 +209,14 @@ void Demagnetization::define()
                                  geom_large, 0., 0);
     }
 
-    amrex::FFT::R2C my_fft(domain_large);
+    amrex_fft = std::make_unique<amrex::FFT::R2C<amrex::Real>>(domain_large);
 
-    my_fft.forward(Kxx,Kxx_fft);
-    my_fft.forward(Kxy,Kxy_fft);
-    my_fft.forward(Kxz,Kxz_fft);
-    my_fft.forward(Kyy,Kyy_fft);
-    my_fft.forward(Kyz,Kyz_fft);
-    my_fft.forward(Kzz,Kzz_fft);
+    amrex_fft->forward(Kxx,Kxx_fft);
+    amrex_fft->forward(Kxy,Kxy_fft);
+    amrex_fft->forward(Kxz,Kxz_fft);
+    amrex_fft->forward(Kyy,Kyy_fft);
+    amrex_fft->forward(Kyz,Kyz_fft);
+    amrex_fft->forward(Kzz,Kzz_fft);
 
 }
 
@@ -239,11 +239,9 @@ void Demagnetization::CalculateH_demag(Array<MultiFab, AMREX_SPACEDIM>& Mfield,
         Mfield_padded[dir].ParallelCopy(Mfield[dir], 0, 0, 1);
     }
 
-    amrex::FFT::R2C my_fft(domain_large);
-
-    my_fft.forward(Mfield_padded[0], Mx_fft);
-    my_fft.forward(Mfield_padded[1], My_fft);
-    my_fft.forward(Mfield_padded[2], Mz_fft);
+    amrex_fft->forward(Mfield_padded[0], Mx_fft);
+    amrex_fft->forward(Mfield_padded[1], My_fft);
+    amrex_fft->forward(Mfield_padded[2], Mz_fft);
 
     for ( MFIter mfi(Kxx_fft,TilingIfNotGPU()); mfi.isValid(); ++mfi )
     {
@@ -291,9 +289,9 @@ void Demagnetization::CalculateH_demag(Array<MultiFab, AMREX_SPACEDIM>& Mfield,
     MultiFab Hy_large(ba_large, dm_large, 1, 0);
     MultiFab Hz_large(ba_large, dm_large, 1, 0);
 
-    my_fft.backward(Hx_fft,Hx_large);
-    my_fft.backward(Hy_fft,Hy_large);
-    my_fft.backward(Hz_fft,Hz_large);
+    amrex_fft->backward(Hx_fft,Hx_large);
+    amrex_fft->backward(Hy_fft,Hy_large);
+    amrex_fft->backward(Hz_fft,Hz_large);
 
     // scale output inverse of number of cells per FFT convention
     long n_cells = 2*n_cell[0];
