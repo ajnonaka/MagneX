@@ -267,21 +267,21 @@ void Demagnetization::CalculateH_demag(Array<MultiFab, AMREX_SPACEDIM>& Mfield,
 	amrex::ParallelFor( bx, [=] AMREX_GPU_DEVICE (int i, int j, int k)
 	{
 	    // Take the dot product in fourier space of M and K and store that in 6 different multifabs
-            GpuComplex<Real> Hx_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxx_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).real())
+            GpuComplex<Real> Hx_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxx_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).real())
                                        - (Mx_fft_ptr(i,j,k).imag() * Kxx_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).imag() * Kxz_fft_ptr(i,j,k).imag()),
-                                         (Mx_fft_ptr(i,j,k).real() * Kxx_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).imag())
+                                         (Mx_fft_ptr(i,j,k).real() * Kxx_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).imag())
                                        + (Mx_fft_ptr(i,j,k).imag() * Kxx_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).imag() * Kxz_fft_ptr(i,j,k).real()) );
             Hx_fft_ptr(i,j,k) = Hx_fft_pt;
 
-            GpuComplex<Real> Hy_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kyy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).real())
+            GpuComplex<Real> Hy_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).real() * Kyy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).real())
                                        - (Mx_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kyy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).imag()),
-                                         (Mx_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kyy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).imag())
+                                         (Mx_fft_ptr(i,j,k).real() * Kxy_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).real() * Kyy_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).imag())
                                        + (Mx_fft_ptr(i,j,k).imag() * Kxy_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kyy_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).real()) );
             Hy_fft_ptr(i,j,k) = Hy_fft_pt;
 
-            GpuComplex<Real> Hz_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kzz_fft_ptr(i,j,k).real())
+            GpuComplex<Real> Hz_fft_pt(  (Mx_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).real() * Kzz_fft_ptr(i,j,k).real())
                                        - (Mx_fft_ptr(i,j,k).imag() * Kxz_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).imag() * Kzz_fft_ptr(i,j,k).imag()),
-                                         (Mx_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kzz_fft_ptr(i,j,k).imag())
+                                         (Mx_fft_ptr(i,j,k).real() * Kxz_fft_ptr(i,j,k).imag() + My_fft_ptr(i,j,k).real() * Kyz_fft_ptr(i,j,k).imag() + Mz_fft_ptr(i,j,k).real() * Kzz_fft_ptr(i,j,k).imag())
                                        + (Mx_fft_ptr(i,j,k).imag() * Kxz_fft_ptr(i,j,k).real() + My_fft_ptr(i,j,k).imag() * Kyz_fft_ptr(i,j,k).real() + Mz_fft_ptr(i,j,k).imag() * Kzz_fft_ptr(i,j,k).real()) );
             Hz_fft_ptr(i,j,k) = Hz_fft_pt;
 	});
