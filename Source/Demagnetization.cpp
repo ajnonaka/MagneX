@@ -294,6 +294,14 @@ void Demagnetization::CalculateH_demag(Array<MultiFab, AMREX_SPACEDIM>& Mfield,
     my_fft.backward(Hx_fft,Hx_large);
     my_fft.backward(Hy_fft,Hy_large);
     my_fft.backward(Hz_fft,Hz_large);
+
+    // scale output inverse of number of cells per FFT convention
+    long n_cells = 2*n_cell[0];
+    if (AMREX_SPACEDIM >= 2) n_cells *= 2*n_cell[1];
+    if (AMREX_SPACEDIM >= 3) n_cells *= 2*n_cell[2];
+    Hx_large.mult(1./n_cells);
+    Hy_large.mult(1./n_cells);
+    Hz_large.mult(1./n_cells);
     
     // Copying the elements near the 'upper right' of the double-sized demag back to multifab that is the problem size
     // This is not quite the 'upper right' of the source, it's the destination_coordinate + (n_cell-1)
